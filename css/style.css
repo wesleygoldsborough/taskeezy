@@ -1,0 +1,276 @@
+body {
+  font-family: 'Lato', sans-serif;
+  background: #f1f1f1;
+}
+
+h2 {
+  text-transform: uppercase;
+  color: gray;
+  font-weight: 900;
+  margin-bottom: 24px;
+}
+
+::-webkit-input-placeholder {
+   color: #bababa;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #bababa;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #bababa;
+}
+
+:-ms-input-placeholder {
+   color: #bababa;
+}
+
+#new-task-field,
+#date-field {
+  border: none;
+  background: #eee;
+  border-radius: 10px;
+  font-size: 18px;
+  padding:10px 20px;
+  width:100%;
+  -ms-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+#new-task-field:focus,
+#date-field:focus {
+  outline:none;
+  background: #dce8f5;
+}
+
+#new-task-button {
+  background: #6fcaff;
+  border: none;
+  float:right;
+  width:100%;
+  max-width: 180px;
+  border-radius: 10px;
+  color: #2e86df;
+  font-size: 18px;
+  font-weight: 900;
+  padding:10px 20px;
+  -ms-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+}
+
+#new-task-button:focus {
+    outline:none;
+}
+
+#new-task-button:hover {
+  background: #abe0ff;
+}
+
+#create-task-button {
+  background: #28c262;
+  margin-top: 10px;
+  border: none;
+  width:100%;
+  max-width: 200px;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 900;
+  padding:16px 25px;
+  -ms-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+}
+
+#create-task-button:focus {
+    outline:none;
+}
+
+#create-task-button:hover {
+  background: #5edf8e;
+}
+
+.header-bar {
+  background: #2e86df;
+  padding:20px;
+}
+
+.logo {
+  max-width: 220px;
+  width: 100%;
+  height: auto;
+}
+
+.main-body {
+  background: #f1f1f1;
+  padding-bottom: 50px;
+}
+
+.task-container {
+  margin-top: 30px;
+  background: white;
+  padding: 30px 40px 40px 40px;
+  box-shadow: 8px 8px 20px rgba(0,0,0,0.05);
+}
+
+
+.task-container tr {
+  border: 1px solid #d1d1d1;
+  margin-bottom: 15px;
+  padding: 15px 20px;
+  border-radius: 10px;
+  font-size: 20px;
+}
+
+.task-completed .task-text span {
+  text-decoration: line-through;
+  color: #bcbcbc;
+}
+
+.date {
+  color: #bcbcbc;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+#incompleted-tasks h2,
+.blackout h2 {
+  color: #2e86df;
+}
+
+.task-text {
+  width: 100%;
+}
+
+.close-icon,
+.check-icon,
+.undo-icon {
+  font-size: 30px;
+  color: #e0e0e0;
+  cursor: pointer;
+  -ms-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+}
+
+.undo-icon:hover {
+  color: #2e86df;
+}
+
+.close-icon:hover {
+  color: #bf0b0b;
+}
+
+.check-icon:hover {
+  color: #28c262;
+}
+
+.blackout {
+  display: none;
+  background-color: rgba(0,0,0,0.8);
+  position:fixed;
+  width:100%;
+  height:100%;
+  top:0px;
+  left:0px;
+  z-index:1000;
+}
+
+.popup {
+  background: white;
+  border-radius: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  max-width: 600px;
+  min-width: 300px;
+  width: 100%;
+  min-height: 200px;
+}
+
+.popup-content {
+  padding: 45px 55px 55px 55px;
+  text-align: center;
+}
+
+.cancel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 22px;
+  color: #c5c5c5;
+  margin-right: 18px;
+  margin-top: 16px;
+  -ms-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+}
+
+.cancel:hover {
+  color: #828282;
+  cursor: pointer;
+}
+
+td {
+  padding-right: 15px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 0px;
+}
+
+td:first-child {
+  padding-left: 15px;
+}
+
+thead {
+  display: none;
+}
+
+.fa.pull-left,
+.fa.pull-right {
+  margin: 0px;
+}
+
+@media screen and (max-width: 810px) {
+  .header-bar {
+    padding:20px 0px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+
+  .logo {
+    max-width: 180px;
+  }
+
+  #new-task-button {
+    max-width: 150px;
+    font-size: 14px;
+    font-weight: 900;
+    padding:8px 16px;
+  }
+
+  .task-container {
+    padding: 15px 20px 20px 20px;
+  }
+
+  .task-container tr {
+    font-size: 16px;
+  }
+
+  .close-icon,
+  .check-icon,
+  .undo-icon {
+    font-size: 22px;
+  }
+}

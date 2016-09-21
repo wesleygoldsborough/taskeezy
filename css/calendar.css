@@ -1,0 +1,53 @@
+.ui-widget-header {
+    border: none;
+    background: #2e86df;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.ui-widget {
+	font-family: 'Lato', sans-serif;
+	font-size: 1.1em;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default {
+  background: white;
+  border: none;
+  border-radius: 3px;
+}
+
+.ui-widget-content {
+  background: #eee;
+  border: none;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active {
+  background: #2e86df;
+  color: white;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover {
+  background: white;
+  color: #6fcaff;
+}
+
+.ui-widget-header .ui-state-hover {
+  background: rgba(0,0,0,0.25);
+  border: none;
+}
+
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {
+  background-image: url('https://code.jquery.com/ui/1.10.4/themes/ui-lightness/images/ui-icons_ffffff_256x240.png');
+}
+
+.ui-datepicker .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-prev-hover {
+  top: 3px;
+  left: 3px;
+}
+
+.ui-datepicker .ui-datepicker-next,
+.ui-datepicker .ui-datepicker-next-hover {
+  top: 3px;
+  right: 3px;
+}
