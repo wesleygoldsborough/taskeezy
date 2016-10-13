@@ -134,6 +134,28 @@ h2 {
   color: #bcbcbc;
 }
 
+.task-todo .task-text textarea {
+  border: none;
+  width: 100%;
+  resize: none;
+  padding: 5px 10px;
+  overflow: hidden;
+}
+
+.task-todo .date input {
+  max-width: 55px;
+  padding: 5px;
+  text-align: center;
+  border: none;
+}
+
+.task-todo .task-text textarea:focus,
+.task-todo .date input:focus {
+  outline: none;
+  background: #f4f4f4;
+  color: #333;
+}
+
 .date {
   color: #bcbcbc;
   font-size: 14px;
