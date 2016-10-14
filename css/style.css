@@ -143,9 +143,9 @@ h2 {
 }
 
 .task-todo .date input {
-  max-width: 55px;
-  padding: 5px;
-  text-align: center;
+  max-width: 85px;
+  padding: 5px 10px;
+  text-align: left;
   border: none;
 }
 
@@ -261,6 +261,16 @@ thead {
 .fa.pull-left,
 .fa.pull-right {
   margin: 0px;
+}
+
+.soon {
+  color: #28c262;
+  font-weight: bold;
+}
+
+.late {
+  color: #bf0b0b;
+  font-weight: bold;
 }
 
 @media screen and (max-width: 810px) {
