@@ -4,7 +4,7 @@
 
 // NEEDED FEATURES
 // Ask for confirmation before deleting task
-// Ability to change existing task due date
+// Ability to change existing task due date and then resort data
 // Limit Completed Task list to show first 10 but allow to show the next 10
 // Allow to clear all completed tasks with one click (ask confirmation)
 
@@ -16,15 +16,15 @@ var doneList = [];
 var initialtodoList = [{
     taskTitle: "Do The Laundry",
     todo: true,
-    dueDate: "09/29"
+    dueDate: "10/12"
 }, {
     taskTitle: "Clean the Bathroom",
     todo: true,
-    dueDate: "09/30"
+    dueDate: "10/13"
 }, {
     taskTitle: "Make Dinner",
     todo: true,
-    dueDate: "10/01"
+    dueDate: "10/14"
 }];
 var initialdoneList = [{
     taskTitle: "Watch TV",
@@ -86,6 +86,7 @@ function refreshTodoList() {
     generateTodoTasks();
     $("#todo-list").html(todoListHTML);
     $("#incompleted-date-sort").stupidsort('asc');
+
 };
 
 // Convert tasks from Completed List array to HTML
@@ -114,8 +115,8 @@ function dueToday() {
 // check for tasks that are overdue and highlight in red
 function pastDue() {
     var today = $.datepicker.formatDate('mm/dd', new Date());
-    $('#todo-list-table .date span').each(function(i, obj) {
-        if ($(this).text() < today) {
+    $('#todo-list-table .date .due-date').each(function(i, obj) {
+        if ($(this).val() < today) {
             $(this).css({
                 color: '#bf0b0b',
                 fontWeight: 'bold'
@@ -138,9 +139,9 @@ function dueYesterday() {
     }
     yesterday = mm + '/' + dd;
 
-    $('#todo-list-table .date span').each(function(i, obj) {
-        if ($(this).text() == yesterday) {
-            $(this).text("Yesterday");
+    $('#todo-list-table .date .due-date').each(function(i, obj) {
+        if ($(this).val() == yesterday) {
+            $(this).val("Yesterday");
         }
     });
 };
@@ -159,9 +160,9 @@ function dueTomorrow() {
     }
     tomorrow = mm + '/' + dd;
 
-    $('#todo-list-table .date span').each(function(i, obj) {
-        if ($(this).text() == tomorrow) {
-            $(this).text("Tomorrow");
+    $('#todo-list-table .date .due-date').each(function(i, obj) {
+        if ($(this).val() == tomorrow) {
+            $(this).val("Tomorrow");
             $(this).css({
                 color: '#28c262',
                 fontWeight: 'bold'

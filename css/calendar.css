@@ -19,6 +19,8 @@
 .ui-widget-content {
   background: #eee;
   border: none;
+  box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+  margin-top: 10px;
 }
 
 .ui-state-active, .ui-widget-content .ui-state-active {
