@@ -2,6 +2,7 @@
 // Enter key doesn't submit new task after date is picked
 
 // NEEDED FEATURES
+// Ability to clear existing date
 // Limit Completed Task list to show first 10 but allow to show the next 10
 // Allow to clear all completed tasks with one click (ask confirmation)
 
@@ -225,7 +226,7 @@ function addTask() {
 // Add submitted task to the ToDo List array on click
 $("#create-task-button").on("click", function(e) {
     addTask();
-    $(".add-new-task").fadeOut(110, function() {
+    $(".add-new-task").fadeOut(300, function() {
         $("#new-task-field").val("");
         $("#date-field").val("");
     });
@@ -234,13 +235,13 @@ $("#create-task-button").on("click", function(e) {
 
 // Show new task popup
 $("#new-task-button").on("click", function(e) {
-    $(".add-new-task").fadeIn(110);
+    $(".add-new-task").fadeIn(300);
     $("#new-task-field").focus();
 });
 
 // close new task popup on cancel click
 $(".cancel").on("click", function(e) {
-    $(".add-new-task").fadeOut(110, function() {
+    $(".add-new-task").fadeOut(300, function() {
         $("#new-task-field").val("");
         $("#date-field").val("");
     });
@@ -249,7 +250,7 @@ $(".cancel").on("click", function(e) {
 // close new task popup on esc keydown
 $(document).keydown(function(e) {
     if (e.keyCode == 27) {
-        $(".add-new-task").fadeOut(110, function() {
+        $(".add-new-task").fadeOut(300, function() {
             $("#new-task-field").val("");
             $("#date-field").val("");
         });
