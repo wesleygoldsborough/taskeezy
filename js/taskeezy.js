@@ -1,10 +1,7 @@
 // KNOWN BUGS
-// Tasks don't sort by date now that the dates are input values instead of text – Fix by changing inputs to textareas?
 // Enter key doesn't submit new task after date is picked
 
 // NEEDED FEATURES
-// Ask for confirmation before deleting task
-// Ability to change existing task due date and then resort data
 // Limit Completed Task list to show first 10 but allow to show the next 10
 // Allow to clear all completed tasks with one click (ask confirmation)
 
@@ -16,15 +13,15 @@ var doneList = [];
 var initialtodoList = [{
     taskTitle: "Do The Laundry",
     todo: true,
-    dueDate: "10/13/16"
+    dueDate: "10/14/16"
 }, {
     taskTitle: "Clean the Bathroom",
     todo: true,
-    dueDate: "10/14/16"
+    dueDate: "10/15/16"
 }, {
     taskTitle: "Make Dinner",
     todo: true,
-    dueDate: "10/15/16"
+    dueDate: "10/16/16"
 }];
 var initialdoneList = [{
     taskTitle: "Watch TV",
@@ -47,7 +44,7 @@ function Task(taskTitle, todo, dueDate) {
     this.dueDate = dueDate;
 };
 
-// set empty variable for HTML
+// set empty variables for HTML
 var todoListHTML = "";
 var doneListHTML = "";
 
@@ -56,10 +53,18 @@ function generateTodoTasks() {
     for (i = 0; i < todoList.length; i++) {
         var newTaskTitle = todoList[i].taskTitle;
         var newDueDate = todoList[i].dueDate;
+        // generate integer of date with year in front
+        var newDueDateInt = newDueDate.replace('/', '');
+        newDueDateInt = newDueDateInt.replace('/', '');
+        var newDueDateIntYr = newDueDateInt.slice(4, 6);
+        newDueDateInt = newDueDateInt.slice(0, 4);
+        newDueDateInt = newDueDateIntYr + newDueDateInt;
+        newDueDateInt = parseInt(newDueDateInt);
+        // build html string
         todoListHTML += '<tr class="task-todo" data-index="' + i + '">';
         todoListHTML += '<td><i class="fa fa-check-square-o pull-left check-icon"></i></td>';
         todoListHTML += '<td class="task-text"><textarea rows="1" class="pull-left task-title" maxlength="120">' + newTaskTitle + '</textarea></td>';
-        todoListHTML += '<td class="date"><input type="text" class="pull-right due-date" readonly="true" value="' + newDueDate + '" /></td>';
+        todoListHTML += '<td class="date" data-sort-value="' + newDueDateInt + '"><input type="text" class="pull-right due-date" readonly="true" value="' + newDueDate + '" /></td>';
         todoListHTML += '<td><i class="fa fa-close pull-right close-icon"></i></td>';
         todoListHTML += '</tr>';
     }
@@ -101,7 +106,7 @@ function refreshDoneList() {
 // check for tasks that are due today and highlight in green
 function dueToday() {
     var today = $.datepicker.formatDate('mm/dd/y', new Date());
-    $('#todo-list-table .date .due-date').each(function(i, obj) {
+    $('#todo-list-table .date .due-date').each(function() {
         if ($(this).val() == today) {
             $(this).val("Today");
             $(this).addClass("soon");
@@ -111,9 +116,9 @@ function dueToday() {
 
 // check for tasks that are overdue and highlight in red
 function pastDue() {
-    var today = $.datepicker.formatDate('mm/dd/y', new Date());
-    $('#todo-list-table .date .due-date').each(function(i, obj) {
-        if ($(this).val() < today) {
+    var today = parseInt($.datepicker.formatDate('ymmdd', new Date()));
+    $('#todo-list-table .date .due-date').each(function() {
+        if ($(this).parent().attr("data-sort-value") < today) {
             $(this).addClass("late");
         }
     });
@@ -125,7 +130,7 @@ function dueYesterday() {
     someDate.setDate(someDate.getDate() - 1);
     var dd = someDate.getDate();
     var mm = someDate.getMonth() + 1;
-    var y = someDate.getFullYear().toString().substr(2,2);
+    var y = someDate.getFullYear().toString().substr(2, 2);
     if (mm < 10) {
         mm = "0" + mm;
     }
@@ -134,7 +139,7 @@ function dueYesterday() {
     }
     yesterday = mm + '/' + dd + '/' + y;
 
-    $('#todo-list-table .date .due-date').each(function(i, obj) {
+    $('#todo-list-table .date .due-date').each(function() {
         if ($(this).val() == yesterday) {
             $(this).val("Yesterday");
         }
@@ -147,7 +152,7 @@ function dueTomorrow() {
     someDate.setDate(someDate.getDate() + 1);
     var dd = someDate.getDate();
     var mm = someDate.getMonth() + 1;
-    var y = someDate.getFullYear().toString().substr(2,2);
+    var y = someDate.getFullYear().toString().substr(2, 2);
     if (mm < 10) {
         mm = "0" + mm;
     }
@@ -156,13 +161,56 @@ function dueTomorrow() {
     }
     tomorrow = mm + '/' + dd + '/' + y;
 
-    $('#todo-list-table .date .due-date').each(function(i, obj) {
+    $('#todo-list-table .date .due-date').each(function() {
         if ($(this).val() == tomorrow) {
             $(this).val("Tomorrow");
             $(this).addClass("soon");
         }
     });
 };
+
+// Format Due Date for readability
+function dateReadability() {
+    $('#todo-list-table .date .due-date').each(function() {
+
+        if ($(this).val() == "Yesterday" || $(this).val() == "Today" || $(this).val() == "Tomorrow") {
+            return;
+        }
+
+        var month = $(this).parent().attr("data-sort-value").slice(2, 4);
+        var day = $(this).parent().attr("data-sort-value").slice(4, 6);
+
+        if (day.slice(0, 1) == "0") {
+            day = day.slice(1, 2);
+        }
+
+        if (month == 01) {
+            $(this).val("Jan" + " " + day);
+        } else if (month == 02) {
+            $(this).val("Feb" + " " + day);
+        } else if (month == 03) {
+            $(this).val("March" + " " + day);
+        } else if (month == 04) {
+            $(this).val("April" + " " + day);
+        } else if (month == 05) {
+            $(this).val("May" + " " + day);
+        } else if (month == 06) {
+            $(this).val("June" + " " + day);
+        } else if (month == 07) {
+            $(this).val("July" + " " + day);
+        } else if (month == 08) {
+            $(this).val("Aug" + " " + day);
+        } else if (month == 09) {
+            $(this).val("Sept" + " " + day);
+        } else if (month == 10) {
+            $(this).val("Oct" + " " + day);
+        } else if (month == 11) {
+            $(this).val("Nov" + " " + day);
+        } else if (month == 12) {
+            $(this).val("Dec" + " " + day);
+        }
+    });
+}
 
 // add task function
 function addTask() {
@@ -177,7 +225,7 @@ function addTask() {
 // Add submitted task to the ToDo List array on click
 $("#create-task-button").on("click", function(e) {
     addTask();
-    $(".blackout").fadeOut(110, function() {
+    $(".add-new-task").fadeOut(110, function() {
         $("#new-task-field").val("");
         $("#date-field").val("");
     });
@@ -186,13 +234,13 @@ $("#create-task-button").on("click", function(e) {
 
 // Show new task popup
 $("#new-task-button").on("click", function(e) {
-    $(".blackout").fadeIn(110);
+    $(".add-new-task").fadeIn(110);
     $("#new-task-field").focus();
 });
 
 // close new task popup on cancel click
 $(".cancel").on("click", function(e) {
-    $(".blackout").fadeOut(110, function() {
+    $(".add-new-task").fadeOut(110, function() {
         $("#new-task-field").val("");
         $("#date-field").val("");
     });
@@ -201,7 +249,7 @@ $(".cancel").on("click", function(e) {
 // close new task popup on esc keydown
 $(document).keydown(function(e) {
     if (e.keyCode == 27) {
-        $(".blackout").fadeOut(110, function() {
+        $(".add-new-task").fadeOut(110, function() {
             $("#new-task-field").val("");
             $("#date-field").val("");
         });
@@ -228,10 +276,11 @@ $("#incompleted-tasks").on("blur", ".task-title", function() {
     }
 });
 
-// Listen for close-icon click for incompleted tasks
-$("#incompleted-tasks").on("click", ".close-icon", function() {
-    var trIndex = ($(this).parents("tr").attr("data-index"));
+
+// Listen for delete confirmation
+$("#incompleted-tasks").on("click", ".confirm-yes", function() {
     // Find matching object and remove it
+    var trIndex = ($(this).parents("tr").attr("data-index"));
     for (i = 0; i < todoList.length; i++) {
         if (trIndex == i) {
             console.log("Removed " + "'" + todoList[i].taskTitle + "'" + " from index " + i);
@@ -239,9 +288,36 @@ $("#incompleted-tasks").on("click", ".close-icon", function() {
             break;
         }
     }
+    var toDelete = $(this).parents("tr")
+        // Move confirmation box out of current task element so it won't get deleted
+    $(".custom-tooltip-wrapper").hide();
+    $(document.body).append($(".custom-tooltip-wrapper"));
     // Remove tr parent of clicked close-icon
-    $(this).parents("tr").remove();
+    toDelete.remove();
     refreshTodoList();
+});
+
+// Listen for delete cancel
+$("#incompleted-tasks").on("click", ".confirm-no", function() {
+    $(".custom-tooltip-wrapper").fadeOut(300, function() {
+        $(document.body).append($(".custom-tooltip-wrapper"));
+    });
+});
+
+// Listen for close-icon click for incompleted tasks and show confirm box
+$("#incompleted-tasks").on("click", ".close-icon", function() {
+    $(".custom-tooltip-wrapper").hide();
+    $(this).before($(".custom-tooltip-wrapper"));
+    $(".custom-tooltip-wrapper").fadeIn(300);
+});
+
+// Hide delete confirmation box when clicked outside of box
+$(document).on('click', function(event) {
+    if (!$(event.target).closest('.custom-tooltip-wrapper').length && !$(event.target).closest('.close-icon').length) {
+        $(".custom-tooltip-wrapper").fadeOut(300, function() {
+            $(document.body).append($(".custom-tooltip-wrapper"));
+        });
+    }
 });
 
 // Listen for close-icon click for completed tasks
@@ -323,18 +399,26 @@ $(function() {
         dateFormat: "mm/dd/y"
     });
     // Call datepicker for existing tasks
-    $('body').on('focus',".due-date", function(){
-      $(this).datepicker({
-          dateFormat: "mm/dd/y",
-          // callback function after date is selected
-          onSelect: function(selectedDate) {
-              $(this).removeClass("late soon");
-              dueToday();
-              pastDue();
-              dueYesterday();
-              dueTomorrow();
-          }
-      });
+    $('body').on('focus', ".due-date", function() {
+        $(this).datepicker({
+            dateFormat: "mm/dd/y",
+            // callback function after date is selected
+            onSelect: function(selectedDate) {
+                $("#todo-list-table").hide();
+                $(this).removeClass("late soon");
+                // I dont think i need this // $(this).attr('value', $(this).val());
+                // update due date in javascript object
+                var newDueDate = $(this).val();
+                var trIndex = ($(this).parents("tr").attr("data-index"));
+                // Find matching object and update the taskTitle
+                for (i = 0; i < todoList.length; i++) {
+                    if (trIndex == i) {
+                        todoList[i].dueDate = newDueDate;
+                    }
+                }
+                refreshTodoList();
+            }
+        });
     });
     // Call table sorter
     $("table").stupidtable();
@@ -350,4 +434,6 @@ table.bind('aftertablesort', function(event, data) {
     dueYesterday();
     dueTomorrow();
     autosize($('textarea'));
+    dateReadability();
+    $("#todo-list-table").fadeIn(500);
 });

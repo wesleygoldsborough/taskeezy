@@ -40,7 +40,7 @@
                                 <tr>
                                     <th></th>
                                     <th></th>
-                                    <th id="incompleted-date-sort" data-sort="string">Sort Date</th>
+                                    <th id="incompleted-date-sort" data-sort="int">Sort Date</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -57,7 +57,7 @@
                                 <tr>
                                     <th></th>
                                     <th></th>
-                                    <th id="completed-date-sort" data-sort="string">Sort Date</th>
+                                    <th id="completed-date-sort" data-sort="int">Sort Date</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -69,7 +69,7 @@
             </div>
         </div>
     </div>
-    <div class="blackout">
+    <div class="add-new-task">
         <div class="popup">
             <div class="popup-content">
                 <i class="fa fa-close cancel"></i>
@@ -80,6 +80,21 @@
                     <input id="create-task-button" type="submit" value="Create New Task">
                 </form>
             </div>
+        </div>
+    </div>
+    <div class="custom-tooltip-wrapper">
+        <div class="custom-tooltip">
+            <span class="custom-tooltip-content">
+    <span style="display:block">
+      Delete Task?
+    </span>
+            <button class="confirm-btn confirm-yes">
+  YES
+  </button>
+            <button class="confirm-btn confirm-no">
+  NO
+  </button>
+            </span>
         </div>
     </div>
 

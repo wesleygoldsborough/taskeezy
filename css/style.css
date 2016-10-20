@@ -163,7 +163,7 @@ h2 {
 }
 
 #incompleted-tasks h2,
-.blackout h2 {
+.add-new-task h2 {
   color: #2e86df;
 }
 
@@ -195,7 +195,7 @@ h2 {
   color: #28c262;
 }
 
-.blackout {
+.add-new-task {
   display: none;
   background-color: rgba(0,0,0,0.8);
   position:fixed;
@@ -271,6 +271,62 @@ thead {
 .late {
   color: #bf0b0b;
   font-weight: bold;
+}
+
+.custom-tooltip-wrapper {
+  text-align: center;
+  display:none;
+  z-index: 100;
+  height: 0px;
+}
+
+.custom-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-tooltip .custom-tooltip-content {
+  width: 160px;
+  background-color: gray;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 15px 5px;
+  position: absolute;
+  left: 50%;
+  margin-left: -80px;
+  bottom: 35px;
+}
+
+.custom-tooltip .custom-tooltip-content::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: gray transparent transparent transparent;
+}
+
+.confirm-btn {
+  background: none;
+  border: 1px solid white;
+  border-radius: 5px;
+  color: white;
+  margin: 10px 5px 5px 5px;
+  min-width: 50px;
+  padding: 5px;
+}
+
+.confirm-btn:hover {
+  background: white;
+  border: 1px solid white;
+  color: gray;
+}
+
+.confirm-btn:focus {
+  outline: none;
 }
 
 @media screen and (max-width: 810px) {
