@@ -2,6 +2,7 @@
 // nothing right now
 
 // NEEDED FEATURES
+// Store data in local storage!
 // Ability to remove existing date
 // Limit Completed Task list to show first 10 but allow to show the next 10
 // Allow to clear all completed tasks with one click (ask confirmation)
