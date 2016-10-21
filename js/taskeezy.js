@@ -1,8 +1,8 @@
 // KNOWN BUGS
-// Enter key doesn't submit new task after date is picked
+// nothing right now
 
 // NEEDED FEATURES
-// Ability to clear existing date
+// Ability to remove existing date
 // Limit Completed Task list to show first 10 but allow to show the next 10
 // Allow to clear all completed tasks with one click (ask confirmation)
 
@@ -12,30 +12,42 @@ var doneList = [];
 
 // Initial task arrays
 var initialtodoList = [{
-    taskTitle: "Do The Laundry",
-    todo: true,
-    dueDate: "10/14/16"
-}, {
-    taskTitle: "Clean the Bathroom",
+    taskTitle: "Revise Marketing Budget",
     todo: true,
     dueDate: "10/15/16"
 }, {
-    taskTitle: "Make Dinner",
+    taskTitle: "Prepare Notes for Next Meeting",
     todo: true,
-    dueDate: "10/16/16"
+    dueDate: "10/20/16"
+}, {
+    taskTitle: "Create Product Launch Report",
+    todo: true,
+    dueDate: "10/21/16"
+}, {
+    taskTitle: "Publish new blog post",
+    todo: true,
+    dueDate: "10/22/16"
+}, {
+    taskTitle: "Phone meeting with Julian",
+    todo: true,
+    dueDate: "10/25/16"
+} ,{
+    taskTitle: "Host Live Webinar",
+    todo: true,
+    dueDate: "11/06/16"
 }];
 var initialdoneList = [{
     taskTitle: "Watch TV",
     todo: false,
-    dueDate: "08/16/16"
+    dueDate: "09/16/16"
 }, {
     taskTitle: "Take A Nap",
     todo: false,
-    dueDate: "08/19/16"
+    dueDate: "10/02/16"
 }, {
     taskTitle: "Eat Pizza",
     todo: false,
-    dueDate: "08/25/16"
+    dueDate: "10/08/16"
 }];
 
 // Constructor Function for new task object
@@ -48,6 +60,9 @@ function Task(taskTitle, todo, dueDate) {
 // set empty variables for HTML
 var todoListHTML = "";
 var doneListHTML = "";
+
+// helper for submit new task bug
+var submitReady = false;
 
 // Loop through ToDo List array and create HTML tasks
 function generateTodoTasks() {
@@ -71,15 +86,22 @@ function generateTodoTasks() {
     }
 };
 
-// Loop through ToDo List array and create HTML tasks
+// Loop through Done List array and create HTML tasks
 function generateCompletedTasks() {
     for (i = 0; i < doneList.length; i++) {
         var newTaskTitle = doneList[i].taskTitle;
         var newDueDate = doneList[i].dueDate;
+        // generate integer of date with year in front
+        var newDueDateInt = newDueDate.replace('/', '');
+        newDueDateInt = newDueDateInt.replace('/', '');
+        var newDueDateIntYr = newDueDateInt.slice(4, 6);
+        newDueDateInt = newDueDateInt.slice(0, 4);
+        newDueDateInt = newDueDateIntYr + newDueDateInt;
+        newDueDateInt = parseInt(newDueDateInt);
         doneListHTML += '<tr class="task-completed" data-index="' + i + '">';
         doneListHTML += '<td><i class="fa fa-undo pull-left undo-icon"></i></td>';
         doneListHTML += '<td class="task-text"><span class="pull-left">' + newTaskTitle + '</span></td>';
-        doneListHTML += '<td class="date"><span class="pull-right">' + newDueDate + '</span></td>';
+        doneListHTML += '<td class="date" data-sort-value="' + newDueDateInt + '"><span class="pull-right">' + newDueDate + '</span></td>';
         doneListHTML += '<td><i class="fa fa-close pull-right close-icon"></i></td>';
         doneListHTML += '</tr>';
     }
@@ -233,6 +255,18 @@ $("#create-task-button").on("click", function(e) {
     e.preventDefault();
 });
 
+// Add submitted task to the ToDo List array on enter press if date has been entered
+$(document).keydown(function(e) {
+    if (submitReady && e.keyCode == 13) {
+        addTask();
+        $(".add-new-task").fadeOut(300, function() {
+            $("#new-task-field").val("");
+            $("#date-field").val("");
+            submitReady = false;
+          });
+    }
+});
+
 // Show new task popup
 $("#new-task-button").on("click", function(e) {
     $(".add-new-task").fadeIn(300);
@@ -244,6 +278,7 @@ $(".cancel").on("click", function(e) {
     $(".add-new-task").fadeOut(300, function() {
         $("#new-task-field").val("");
         $("#date-field").val("");
+        submitReady = false;
     });
 });
 
@@ -253,7 +288,19 @@ $(document).keydown(function(e) {
         $(".add-new-task").fadeOut(300, function() {
             $("#new-task-field").val("");
             $("#date-field").val("");
+            submitReady = false;
         });
+    }
+});
+
+// close new task popup when clicked outside of popup
+$(".add-new-task").on('click', function(event) {
+    if (!$(event.target).closest('.popup').length) {
+      $(".add-new-task").fadeOut(300, function() {
+          $("#new-task-field").val("");
+          $("#date-field").val("");
+          submitReady = false;
+      });
     }
 });
 
@@ -276,7 +323,6 @@ $("#incompleted-tasks").on("blur", ".task-title", function() {
         }
     }
 });
-
 
 // Listen for delete confirmation
 $("#incompleted-tasks").on("click", ".confirm-yes", function() {
@@ -323,6 +369,8 @@ $(document).on('click', function(event) {
 
 // Listen for close-icon click for completed tasks
 $("#completed-tasks").on("click", ".close-icon", function() {
+    $(".custom-tooltip-wrapper").hide();
+    $(document.body).append($(".custom-tooltip-wrapper"));
     var trIndex = ($(this).parents("tr").attr("data-index"));
     for (i = 0; i < doneList.length; i++) {
         // Find matching object and remove it
@@ -339,6 +387,8 @@ $("#completed-tasks").on("click", ".close-icon", function() {
 
 // Listen for check-icon click for incompleted tasks
 $("#incompleted-tasks").on("click", ".check-icon", function() {
+    $(".custom-tooltip-wrapper").hide();
+    $(document.body).append($(".custom-tooltip-wrapper"));
     var trIndex = ($(this).parents("tr").attr("data-index"));
     for (i = 0; i < todoList.length; i++) {
         // Find matching object, mark as completed, and move to completed list array
@@ -358,6 +408,8 @@ $("#incompleted-tasks").on("click", ".check-icon", function() {
 
 // Listen for undo-icon click for incompleted tasks
 $("#completed-tasks").on("click", ".undo-icon", function() {
+    $(".custom-tooltip-wrapper").hide();
+    $(document.body).append($(".custom-tooltip-wrapper"));
     var trIndex = ($(this).parents("tr").attr("data-index"));
     for (i = 0; i < doneList.length; i++) {
         // Find matching object, mark as completed, and move to completed list array
@@ -397,17 +449,20 @@ initialdoneList.forEach(function(task) {
 $(function() {
     // Call datepicker for creating a new task
     $("#date-field").datepicker({
-        dateFormat: "mm/dd/y"
+        dateFormat: "mm/dd/y",
+        // callback function after date is selected
+        onSelect: function() {
+            submitReady = true;
+        }
     });
     // Call datepicker for existing tasks
     $('body').on('focus', ".due-date", function() {
         $(this).datepicker({
             dateFormat: "mm/dd/y",
             // callback function after date is selected
-            onSelect: function(selectedDate) {
+            onSelect: function() {
                 $("#todo-list-table").hide();
                 $(this).removeClass("late soon");
-                // I dont think i need this // $(this).attr('value', $(this).val());
                 // update due date in javascript object
                 var newDueDate = $(this).val();
                 var trIndex = ($(this).parents("tr").attr("data-index"));
