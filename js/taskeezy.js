@@ -1,62 +1,13 @@
 // KNOWN BUGS
-// nothing right now
+// nothin right now
 
-// NEEDED FEATURES
-// Store data in local storage!
+// POTENTIAL FEATURES
 // Ability to remove existing date
-// Limit Completed Task list to show first 10 but allow to show the next 10
-// Allow to clear all completed tasks with one click (ask confirmation)
+// Option to sort/filter tasks by date, due today, late, future
 
 // Empty task arrays
 var todoList = [];
 var doneList = [];
-
-// Initial task arrays
-var initialtodoList = [{
-    taskTitle: "Revise Marketing Budget",
-    todo: true,
-    dueDate: "10/15/16"
-}, {
-    taskTitle: "Prepare Notes for Next Meeting",
-    todo: true,
-    dueDate: "10/20/16"
-}, {
-    taskTitle: "Create Product Launch Report",
-    todo: true,
-    dueDate: "10/21/16"
-}, {
-    taskTitle: "Publish new blog post",
-    todo: true,
-    dueDate: "10/22/16"
-}, {
-    taskTitle: "Phone meeting with Julian",
-    todo: true,
-    dueDate: "10/25/16"
-} ,{
-    taskTitle: "Host Live Webinar",
-    todo: true,
-    dueDate: "11/06/16"
-}];
-var initialdoneList = [{
-    taskTitle: "Watch TV",
-    todo: false,
-    dueDate: "09/16/16"
-}, {
-    taskTitle: "Take A Nap",
-    todo: false,
-    dueDate: "10/02/16"
-}, {
-    taskTitle: "Eat Pizza",
-    todo: false,
-    dueDate: "10/08/16"
-}];
-
-// Constructor Function for new task object
-function Task(taskTitle, todo, dueDate) {
-    this.taskTitle = taskTitle;
-    this.todo = todo;
-    this.dueDate = dueDate;
-};
 
 // set empty variables for HTML
 var todoListHTML = "";
@@ -64,6 +15,54 @@ var doneListHTML = "";
 
 // helper for submit new task bug
 var submitReady = false;
+
+// Local Storage Functions
+Storage.prototype.setObject = function(key, value) {
+    this.setItem(key, JSON.stringify(value));
+};
+Storage.prototype.getObject = function(key) {
+    var value = this.getItem(key);
+    return value && JSON.parse(value);
+};
+
+// load any existing tasks from local storage
+if (localStorage.getObject('todoList')) {
+    todoList = localStorage.getObject('todoList');
+    console.log("using existing local storage for todo list");
+};
+if (localStorage.getObject('doneList')) {
+    doneList = localStorage.getObject('doneList');
+    console.log("using existing local storage for completed task list");
+};
+
+// functions to sync with local storage
+function syncTodoList() {
+    localStorage.setObject('todoList', todoList);
+};
+
+function syncDoneList() {
+    localStorage.setObject('doneList', doneList);
+};
+
+// function to hide/show "clear all" button
+function clearAllControl() {
+    if ($(".task-completed").length > 0) {
+        $("#clear-all-wrapper").css({
+            "display": "inline-block"
+        });
+    } else {
+        $("#clear-all-wrapper").css({
+            "display": "none"
+        });
+    }
+};
+
+// Constructor Function for new task object
+function Task(taskTitle, todo, dueDate) {
+    this.taskTitle = taskTitle;
+    this.todo = todo;
+    this.dueDate = dueDate;
+};
 
 // Loop through ToDo List array and create HTML tasks
 function generateTodoTasks() {
@@ -82,7 +81,7 @@ function generateTodoTasks() {
         todoListHTML += '<td><i class="fa fa-check-square-o pull-left check-icon"></i></td>';
         todoListHTML += '<td class="task-text"><textarea rows="1" class="pull-left task-title" maxlength="120">' + newTaskTitle + '</textarea></td>';
         todoListHTML += '<td class="date" data-sort-value="' + newDueDateInt + '"><input type="text" class="pull-right due-date" readonly="true" value="' + newDueDate + '" /></td>';
-        todoListHTML += '<td><i class="fa fa-close pull-right close-icon"></i></td>';
+        todoListHTML += '<td><i class="fa fa-trash-o pull-right close-icon"></i></td>';
         todoListHTML += '</tr>';
     }
 };
@@ -103,7 +102,7 @@ function generateCompletedTasks() {
         doneListHTML += '<td><i class="fa fa-undo pull-left undo-icon"></i></td>';
         doneListHTML += '<td class="task-text"><span class="pull-left">' + newTaskTitle + '</span></td>';
         doneListHTML += '<td class="date" data-sort-value="' + newDueDateInt + '"><span class="pull-right">' + newDueDate + '</span></td>';
-        doneListHTML += '<td><i class="fa fa-close pull-right close-icon"></i></td>';
+        doneListHTML += '<td><i class="fa fa-trash-o pull-right close-icon"></i></td>';
         doneListHTML += '</tr>';
     }
 };
@@ -115,7 +114,6 @@ function refreshTodoList() {
     generateTodoTasks();
     $("#todo-list").html(todoListHTML);
     $("#incompleted-date-sort").stupidsort('asc');
-
 };
 
 // Convert tasks from Completed List array to HTML
@@ -125,6 +123,15 @@ function refreshDoneList() {
     generateCompletedTasks();
     $("#completed-list").html(doneListHTML);
     $("#completed-date-sort").stupidsort('asc');
+};
+
+// If tasks have no date, move to end of the list
+function moveDatelessTasks() {
+    $('#todo-list-table .date .due-date').each(function() {
+        if ($(this).val() === "") {
+            $(this).parents("tr").appendTo("#todo-list-table");
+        }
+    });
 };
 
 // check for tasks that are due today and highlight in green
@@ -243,16 +250,16 @@ function addTask() {
     var newTask = new Task(taskTitle, true, dueDate);
     todoList.unshift(newTask);
     refreshTodoList();
+    syncTodoList();
     console.log("New task added – " + "'" + taskTitle + "'");
 };
 
 // Add submitted task to the ToDo List array on click
 $("#create-task-button").on("click", function(e) {
     addTask();
-    $(".add-new-task").fadeOut(300, function() {
-        $("#new-task-field").val("");
-        $("#date-field").val("");
-    });
+    $(".add-new-task").hide();
+    $("#new-task-field").val("");
+    $("#date-field").val("");
     e.preventDefault();
 });
 
@@ -260,48 +267,44 @@ $("#create-task-button").on("click", function(e) {
 $(document).keydown(function(e) {
     if (submitReady && e.keyCode == 13) {
         addTask();
-        $(".add-new-task").fadeOut(300, function() {
-            $("#new-task-field").val("");
-            $("#date-field").val("");
-            submitReady = false;
-          });
+        $(".add-new-task").hide();
+        $("#new-task-field").val("");
+        $("#date-field").val("");
+        submitReady = false;
     }
 });
 
 // Show new task popup
 $("#new-task-button").on("click", function(e) {
-    $(".add-new-task").fadeIn(300);
+    $(".add-new-task").fadeIn(150);
     $("#new-task-field").focus();
 });
 
 // close new task popup on cancel click
 $(".cancel").on("click", function(e) {
-    $(".add-new-task").fadeOut(300, function() {
-        $("#new-task-field").val("");
-        $("#date-field").val("");
-        submitReady = false;
-    });
+    $(".add-new-task").hide();
+    $("#new-task-field").val("");
+    $("#date-field").val("");
+    submitReady = false;
 });
 
 // close new task popup on esc keydown
 $(document).keydown(function(e) {
     if (e.keyCode == 27) {
-        $(".add-new-task").fadeOut(300, function() {
-            $("#new-task-field").val("");
-            $("#date-field").val("");
-            submitReady = false;
-        });
+        $(".add-new-task").hide();
+        $("#new-task-field").val("");
+        $("#date-field").val("");
+        submitReady = false;
     }
 });
 
 // close new task popup when clicked outside of popup
 $(".add-new-task").on('click', function(event) {
     if (!$(event.target).closest('.popup').length) {
-      $(".add-new-task").fadeOut(300, function() {
-          $("#new-task-field").val("");
-          $("#date-field").val("");
-          submitReady = false;
-      });
+        $(".add-new-task").hide();
+        $("#new-task-field").val("");
+        $("#date-field").val("");
+        submitReady = false;
     }
 });
 
@@ -323,6 +326,7 @@ $("#incompleted-tasks").on("blur", ".task-title", function() {
             todoList[i].taskTitle = newText;
         }
     }
+    syncTodoList();
 });
 
 // Listen for delete confirmation
@@ -343,11 +347,12 @@ $("#incompleted-tasks").on("click", ".confirm-yes", function() {
     // Remove tr parent of clicked close-icon
     toDelete.remove();
     refreshTodoList();
+    syncTodoList();
 });
 
 // Listen for delete cancel
 $("#incompleted-tasks").on("click", ".confirm-no", function() {
-    $(".custom-tooltip-wrapper").fadeOut(300, function() {
+    $(".custom-tooltip-wrapper").fadeOut(150, function() {
         $(document.body).append($(".custom-tooltip-wrapper"));
     });
 });
@@ -356,13 +361,13 @@ $("#incompleted-tasks").on("click", ".confirm-no", function() {
 $("#incompleted-tasks").on("click", ".close-icon", function() {
     $(".custom-tooltip-wrapper").hide();
     $(this).before($(".custom-tooltip-wrapper"));
-    $(".custom-tooltip-wrapper").fadeIn(300);
+    $(".custom-tooltip-wrapper").fadeIn(150);
 });
 
 // Hide delete confirmation box when clicked outside of box
 $(document).on('click', function(event) {
     if (!$(event.target).closest('.custom-tooltip-wrapper').length && !$(event.target).closest('.close-icon').length) {
-        $(".custom-tooltip-wrapper").fadeOut(300, function() {
+        $(".custom-tooltip-wrapper").fadeOut(150, function() {
             $(document.body).append($(".custom-tooltip-wrapper"));
         });
     }
@@ -384,6 +389,8 @@ $("#completed-tasks").on("click", ".close-icon", function() {
     // Remove tr parent of clicked close-icon
     $(this).parents("tr").remove();
     refreshDoneList();
+    syncDoneList();
+    clearAllControl();
 });
 
 // Listen for check-icon click for incompleted tasks
@@ -405,6 +412,9 @@ $("#incompleted-tasks").on("click", ".check-icon", function() {
     $(this).parents("tr").remove();
     refreshTodoList();
     refreshDoneList();
+    syncTodoList();
+    syncDoneList();
+    clearAllControl();
 });
 
 // Listen for undo-icon click for incompleted tasks
@@ -426,24 +436,17 @@ $("#completed-tasks").on("click", ".undo-icon", function() {
     $(this).parents("tr").remove();
     refreshTodoList();
     refreshDoneList();
+    syncTodoList();
+    syncDoneList();
+    clearAllControl();
 });
 
-// Create todo tasks
-initialtodoList.forEach(function(task) {
-    var myTask = new Task(task.taskTitle, task.todo, task.dueDate);
-    // add to the proper array
-    todoList.unshift(myTask);
-    // render HTML tasks on page
-    refreshTodoList();
-});
-
-// Create completed tasks
-initialdoneList.forEach(function(task) {
-    var myTask = new Task(task.taskTitle, task.todo, task.dueDate);
-    // add to the proper array
-    doneList.unshift(myTask);
-    // render HTML tasks on page
+// Listen for click to clear all completed tasks
+$("#clear-all").on("click", function() {
+    doneList = [];
     refreshDoneList();
+    syncDoneList();
+    clearAllControl();
 });
 
 // Call Plugins & Features
@@ -474,6 +477,7 @@ $(function() {
                     }
                 }
                 refreshTodoList();
+                syncTodoList();
             }
         });
     });
@@ -492,5 +496,13 @@ table.bind('aftertablesort', function(event, data) {
     dueTomorrow();
     autosize($('textarea'));
     dateReadability();
+    moveDatelessTasks();
     $("#todo-list-table").fadeIn(500);
 });
+
+// create any existing tasks
+refreshTodoList();
+refreshDoneList();
+
+// if completed tasks exist, show clear all button
+clearAllControl();
